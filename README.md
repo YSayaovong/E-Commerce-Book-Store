@@ -52,9 +52,9 @@ This project simulates a real-world online bookstore with product listings, filt
 npx serve .
 
 
-Browse books, add to cart, and test the shopping flow.
+### Browse books, add to cart, and test the shopping flow.
 
-🎯 Learning Objectives
+## 🎯 Learning Objectives
 
 Building a fully functional front-end project without frameworks
 
