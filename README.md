@@ -56,10 +56,7 @@ npx serve .
 
 ## 🎯 Learning Objectives
 
-Building a fully functional front-end project without frameworks
-
-Practicing DOM manipulation with vanilla JS
-
-Implementing e-commerce features (cart, sorting, filters)
-
-Strengthening responsive UI/UX design skills
+- Building a fully functional front-end project without frameworks
+- Practicing DOM manipulation with vanilla JS
+- Implementing e-commerce features (cart, sorting, filters)
+- Strengthening responsive UI/UX design skills
