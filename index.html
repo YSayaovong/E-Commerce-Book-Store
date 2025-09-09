@@ -1,18 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>BookStack — E-Commerce Book Store</title>
 
-  <!-- Icons & Fonts -->
-  <script src="https://kit.fontawesome.com/c8e4d183c2.js" crossorigin="anonymous"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <!-- Security: strict, static-only CSP -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self';
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src https://fonts.gstatic.com;
+    img-src 'self' https://raw.githubusercontent.com data:;
+    connect-src 'none';
+    frame-ancestors 'none';
+    form-action 'none';
+    base-uri 'none';
+  ">
 
-  <!-- Correct filename -->
+  <!-- Fonts (no JS kits) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
   <link rel="stylesheet" href="style.css" />
-  <!-- Defer so DOM exists -->
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -33,11 +45,12 @@
 
       <div class="nav__actions">
         <button class="btn__icon" id="btn-cart" aria-label="Open cart">
-          <i class="fas fa-shopping-cart"></i>
+          <!-- inline SVG icon -->
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h-2l-1 2h2l3.6 7.59-1.35 2.44A1.99 1.99 0 0 0 10 19h9v-2h-8.42c-.14 0-.25-.11-.25-.25l.03-.12L11.1 15h6.45a2 2 0 0 0 1.8-1.11l3.58-7.16A1 1 0 0 0 22 5h-15zM7 20a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm10 0a2 2 0 1 0 .001 4.001A2 2 0 0 0 17 20z"/></svg>
           <span class="cart__count" id="cart-count">0</span>
         </button>
         <button class="btn__icon btn__menu" id="btn-menu" aria-label="Open menu">
-          <i class="fas fa-bars"></i>
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
         </button>
       </div>
     </div>
@@ -45,7 +58,7 @@
     <!-- Mobile Menu -->
     <div class="menu__backdrop" id="mobile-menu">
       <button class="btn__icon btn__menu--close" id="btn-menu-close" aria-label="Close menu">
-        <i class="fas fa-times"></i>
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
       </button>
       <ul class="menu__links">
         <li><a href="#featured" class="menu__link">Home</a></li>
@@ -61,7 +74,7 @@
     <div class="cart__header">
       <h3>Your Cart</h3>
       <button class="btn__icon" id="cart-close" aria-label="Close cart">
-        <i class="fas fa-times"></i>
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
       </button>
     </div>
     <div class="cart__body" id="cart-items"></div>
@@ -152,13 +165,14 @@
         <li><a href="#featured">Home</a></li>
         <li><a href="#categories">Categories</a></li>
         <li><a href="#new">New Arrivals</a></li>
-        <li><a href="mailto:hello@example.com">Support</a></li>
+        <li><a href="mailto:hello@example.com" rel="noopener noreferrer">Support</a></li>
       </ul>
       <div class="footer__payments">
-        <i class="fab fa-cc-visa"></i>
-        <i class="fab fa-cc-mastercard"></i>
-        <i class="fab fa-cc-amex"></i>
-        <i class="fab fa-cc-paypal"></i>
+        <!-- Simple text badges to avoid icon kits -->
+        <span class="pay">VISA</span>
+        <span class="pay">MC</span>
+        <span class="pay">AMEX</span>
+        <span class="pay">PayPal</span>
       </div>
     </div>
   </footer>

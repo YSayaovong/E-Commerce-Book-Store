@@ -1,172 +1,134 @@
-/* Helpers & DOM refs */
-const $ = (s, c = document) => c.querySelector(s);
-const $all = (s, c = document) => Array.from(c.querySelectorAll(s));
+// script.js — safe, static-only version
 
-const overlay = $("#overlay");
-const mobileMenu = $("#mobile-menu");
-const btnMenu = $("#btn-menu");
-const btnMenuClose = $("#btn-menu-close");
+document.addEventListener("DOMContentLoaded", () => {
+  const productGrid = document.getElementById("product-grid");
+  const newGrid = document.getElementById("new-grid");
+  const cartBtn = document.getElementById("btn-cart");
+  const cart = document.getElementById("cart");
+  const cartClose = document.getElementById("cart-close");
+  const overlay = document.getElementById("overlay");
+  const cartItemsContainer = document.getElementById("cart-items");
+  const cartCount = document.getElementById("cart-count");
+  const cartSubtotal = document.getElementById("cart-subtotal");
+  const clearBtn = document.getElementById("btn-clear");
+  const checkoutBtn = document.getElementById("btn-checkout");
+  const menuBtn = document.getElementById("btn-menu");
+  const menuCloseBtn = document.getElementById("btn-menu-close");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const yearSpan = document.getElementById("year");
 
-const cartDrawer = $("#cart");
-const btnCart = $("#btn-cart");
-const btnCartClose = $("#cart-close");
-const cartItemsEl = $("#cart-items");
-const cartSubtotalEl = $("#cart-subtotal");
-const cartCountEl = $("#cart-count");
-const btnClear = $("#btn-clear");
+  const products = [
+    { id: 1, title: "Atomic Habits", price: 15.99, rating: 4.8, category: "self-help", img: "assets/atomic_habits.jpg" },
+    { id: 2, title: "Deep Work", price: 12.50, rating: 4.7, category: "productivity", img: "assets/deep_work.jpg" },
+    { id: 3, title: "The Lean Startup", price: 18.00, rating: 4.6, category: "business", img: "assets/lean_startup.jpg" },
+    { id: 4, title: "Clean Code", price: 22.00, rating: 4.9, category: "tech", img: "assets/clean_code.jpg" },
+    { id: 5, title: "Zero to One", price: 14.00, rating: 4.5, category: "business", img: "assets/zero_to_one.jpg" },
+    { id: 6, title: "The Pragmatic Programmer", price: 25.00, rating: 4.9, category: "tech", img: "assets/pragmatic_programmer.jpg" }
+  ];
 
-const productGrid = $("#product-grid");
-const newGrid = $("#new-grid");
-const sortSelect = $("#sort");
-const chipButtons = $all(".chip");
-const yearEl = $("#year");
-if (yearEl) yearEl.textContent = new Date().getFullYear();
+  let cartItems = JSON.parse(localStorage.getItem("cart")) || [];
 
-/* Catalog (GitHub-hosted images) */
-const BASE = "https://raw.githubusercontent.com/YSayaovong/E-Commerce-Book-Store/main/assets/";
-
-const CATALOG = [
-  { id:"ctci", title:"Cracking the Coding Interview", price:14.95, oldPrice:59.95, rating:4.7, reviews:1243, img: BASE+"crack%20the%20coding%20interview.png", category:"tech", badge:"Sale" },
-  { id:"atomic", title:"Atomic Habits", price:14.95, oldPrice:59.95, rating:4.8, reviews:1821, img: BASE+"atomic%20habits.jpg", category:"self-help", badge:"Bestseller" },
-  { id:"goggins", title:"Can't Hurt Me", price:14.95, oldPrice:59.95, rating:4.6, reviews:976, img: BASE+"david%20goggins.jpeg", category:"self-help" },
-  { id:"deepwork", title:"Deep Work", price:14.95, oldPrice:59.95, rating:4.7, reviews:1432, img: BASE+"deep%20work.jpeg", category:"productivity" },
-  { id:"b1", title:"The 10X Rule", price:14.95, oldPrice:59.95, rating:4.5, reviews:512, img: BASE+"book-1.jpeg", category:"business" },
-  { id:"b2", title:"Be Obsessed or Be Average", price:14.95, oldPrice:59.95, rating:4.3, reviews:288, img: BASE+"book-2.jpeg", category:"business" },
-  { id:"b3", title:"Rich Dad Poor Dad", price:14.95, oldPrice:59.95, rating:4.6, reviews:2211, img: BASE+"book-3.jpeg", category:"business" },
-  { id:"b4", title:"Cashflow Quadrant", price:14.95, oldPrice:59.95, rating:4.5, reviews:962, img: BASE+"book-4.jpeg", category:"business" },
-  { id:"b5", title:"48 Laws of Power", price:14.95, oldPrice:59.95, rating:4.4, reviews:3044, img: BASE+"book-5.jpeg", category:"business" },
-  { id:"b6", title:"The 5 Second Rule", price:14.95, oldPrice:59.95, rating:4.2, reviews:713, img: BASE+"book-6.jpeg", category:"self-help" },
-  { id:"b7", title:"Your Next Five Moves", price:14.95, oldPrice:59.95, rating:4.5, reviews:533, img: BASE+"book-7.jpg", category:"business" },
-  { id:"b8", title:"Mastery", price:14.95, oldPrice:59.95, rating:4.6, reviews:1240, img: BASE+"book-8.jpeg", category:"productivity" },
-];
-
-const NEW_IDS = ["b8","b7","b6","b5","b4","b3"];
-
-/* Render */
-function productCard(p){
-  return `
-  <article class="card" data-id="${p.id}" data-category="${p.category}">
-    <div class="card__media">
-      ${p.badge ? `<span class="badge">${p.badge}</span>` : ``}
-      <img src="${p.img}" alt="${p.title}">
-    </div>
-    <div class="card__body">
-      <div class="card__title">${p.title}</div>
-      <div class="stars">
-        ${'<i class="fas fa-star"></i>'.repeat(Math.floor(p.rating))}
-        ${p.rating - Math.floor(p.rating) >= .5 ? '<i class="fas fa-star-half-alt"></i>' : ''}
-        <span class="muted small">(${p.reviews.toLocaleString()})</span>
-      </div>
-      <div class="price">
-        <span class="price__old">$${p.oldPrice.toFixed(2)}</span>
-        <strong>$${p.price.toFixed(2)}</strong>
-      </div>
-      <div class="card__actions">
-        <button class="btn btn--primary btn--small add-to-cart">Add to Cart</button>
-        <button class="btn btn--ghost btn--small">Details</button>
-      </div>
-    </div>
-  </article>`;
-}
-function renderProducts(list){ productGrid.innerHTML = list.map(productCard).join(""); }
-function renderNewArrivals(){
-  const items = CATALOG.filter(c => NEW_IDS.includes(c.id));
-  newGrid.innerHTML = items.map(productCard).join("");
-}
-
-/* Sort & Filter */
-function applySort(list, mode){
-  const a=[...list];
-  if(mode==="price-asc") a.sort((x,y)=>x.price-y.price);
-  if(mode==="price-desc") a.sort((x,y)=>y.price-x.price);
-  if(mode==="rating-desc") a.sort((x,y)=>y.rating-x.rating);
-  return a;
-}
-function filterByCategory(list, cat){ return cat==="all" ? list : list.filter(p=>p.category===cat); }
-
-/* Cart */
-const CART_KEY = "bookstack_cart_v1";
-const cart = {
-  items: JSON.parse(localStorage.getItem(CART_KEY) || "[]"),
-  save(){ localStorage.setItem(CART_KEY, JSON.stringify(this.items)); },
-  add(id){ const f=this.items.find(i=>i.id===id); f?f.qty++:this.items.push({id,qty:1}); this.save(); updateCartUI(); },
-  remove(id){ this.items=this.items.filter(i=>i.id!==id); this.save(); updateCartUI(); },
-  qty(id,d){ const it=this.items.find(i=>i.id===id); if(!it) return; it.qty=Math.max(1,it.qty+d); this.save(); updateCartUI(); },
-  clear(){ this.items=[]; this.save(); updateCartUI(); },
-  count(){ return this.items.reduce((n,i)=>n+i.qty,0); },
-  subtotal(){ return this.items.reduce((s,i)=>{ const p=CATALOG.find(c=>c.id===i.id); return s+(p?p.price*i.qty:0); },0); }
-};
-function updateCartUI(){
-  cartCountEl.textContent = cart.count();
-  cartSubtotalEl.textContent = `$${cart.subtotal().toFixed(2)}`;
-  cartItemsEl.innerHTML = cart.items.map(i=>{
-    const p = CATALOG.find(c=>c.id===i.id); if(!p) return "";
-    return `
-      <div class="cart__item">
-        <img class="cart__thumb" src="${p.img}" alt="${p.title}">
-        <div>
-          <div class="cart__title">${p.title}</div>
-          <div class="cart__meta">$${p.price.toFixed(2)} • ${p.category}</div>
-          <div class="qty">
-            <button data-action="dec" data-id="${i.id}">−</button>
-            <input value="${i.qty}" readonly>
-            <button data-action="inc" data-id="${i.id}">+</button>
-          </div>
+  // Render product cards
+  function renderProducts(grid, items) {
+    grid.innerHTML = "";
+    items.forEach(p => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <img src="${p.img}" alt="${p.title}" class="card__img"/>
+        <div class="card__body">
+          <h3 class="card__title">${p.title}</h3>
+          <p class="card__price">$${p.price.toFixed(2)}</p>
+          <p class="card__rating">⭐ ${p.rating}</p>
+          <button class="btn btn--primary btn--small" data-id="${p.id}">Add to Cart</button>
         </div>
-        <button class="btn__icon" data-action="remove" data-id="${i.id}"><i class="fas fa-trash"></i></button>
-      </div>`;
-  }).join("");
-}
-
-/* Drawers & Menu */
-function openDrawer(){ cartDrawer.classList.add("open"); overlay.classList.add("open"); }
-function closeDrawer(){ cartDrawer.classList.remove("open"); overlay.classList.remove("open"); }
-if (btnCart) btnCart.addEventListener("click", openDrawer);
-if (btnCartClose) btnCartClose.addEventListener("click", closeDrawer);
-overlay?.addEventListener("click", ()=>{ closeDrawer(); closeMenu(); });
-
-function openMenu(){ mobileMenu.classList.add("open"); overlay.classList.add("open"); }
-function closeMenu(){ mobileMenu.classList.remove("open"); overlay.classList.remove("open"); }
-btnMenu?.addEventListener("click", openMenu);
-btnMenuClose?.addEventListener("click", closeMenu);
-
-/* Events */
-document.addEventListener("click", e=>{
-  if(e.target.closest(".add-to-cart")){
-    const id = e.target.closest(".card")?.dataset.id;
-    if(id) cart.add(id);
+      `;
+      grid.appendChild(card);
+    });
   }
-  const action = e.target.dataset.action;
-  const id = e.target.dataset.id;
-  if(action==="remove") cart.remove(id);
-  if(action==="inc") cart.qty(id,+1);
-  if(action==="dec") cart.qty(id,-1);
-});
 
-sortSelect?.addEventListener("change", ()=>{
-  const mode = sortSelect.value;
-  const cat = $(".chip.active")?.dataset.filter || "all";
-  renderProducts(applySort(filterByCategory(CATALOG, cat), mode));
-});
+  renderProducts(productGrid, products);
+  renderProducts(newGrid, products.slice(-3));
 
-chipButtons.forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    chipButtons.forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    const mode = sortSelect?.value || "featured";
-    renderProducts(applySort(filterByCategory(CATALOG, btn.dataset.filter), mode));
+  // Cart helpers
+  function updateCart() {
+    cartItemsContainer.innerHTML = "";
+    let subtotal = 0;
+
+    cartItems.forEach(item => {
+      subtotal += item.price * item.qty;
+      const row = document.createElement("div");
+      row.className = "cart__item";
+      row.innerHTML = `
+        <div>
+          <strong>${item.title}</strong><br>
+          $${item.price.toFixed(2)} × ${item.qty}
+        </div>
+        <button class="btn__icon btn__remove" data-id="${item.id}" aria-label="Remove item">✖</button>
+      `;
+      cartItemsContainer.appendChild(row);
+    });
+
+    cartSubtotal.textContent = `$${subtotal.toFixed(2)}`;
+    cartCount.textContent = cartItems.reduce((a, b) => a + b.qty, 0);
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+  }
+
+  function addToCart(id) {
+    const product = products.find(p => p.id == id);
+    const existing = cartItems.find(item => item.id == id);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      cartItems.push({ ...product, qty: 1 });
+    }
+    updateCart();
+  }
+
+  // Event delegation
+  document.body.addEventListener("click", e => {
+    if (e.target.matches("[data-id]")) {
+      addToCart(e.target.dataset.id);
+    }
+    if (e.target.matches(".btn__remove")) {
+      const id = e.target.dataset.id;
+      cartItems = cartItems.filter(i => i.id != id);
+      updateCart();
+    }
   });
-});
-const allChip = chipButtons.find(b=>b.dataset.filter==="all");
-allChip?.classList.add("active");
 
-btnClear?.addEventListener("click", ()=>cart.clear());
-$("#btn-checkout")?.addEventListener("click", ()=>{
-  if(cart.items.length===0) return alert("Your cart is empty.");
-  alert("Demo checkout not implemented.");
-});
+  // Cart toggles
+  cartBtn.addEventListener("click", () => {
+    cart.classList.add("open");
+    overlay.classList.add("active");
+  });
+  cartClose.addEventListener("click", () => {
+    cart.classList.remove("open");
+    overlay.classList.remove("active");
+  });
+  overlay.addEventListener("click", () => {
+    cart.classList.remove("open");
+    overlay.classList.remove("active");
+    mobileMenu.classList.remove("active");
+  });
 
-/* Initial render */
-renderProducts(CATALOG);
-renderNewArrivals();
-updateCartUI();
+  // Clear & checkout
+  clearBtn.addEventListener("click", () => {
+    cartItems = [];
+    updateCart();
+  });
+  checkoutBtn.addEventListener("click", () => {
+    alert("Checkout not implemented. This is a demo.");
+  });
+
+  // Mobile menu
+  menuBtn.addEventListener("click", () => mobileMenu.classList.add("active"));
+  menuCloseBtn.addEventListener("click", () => mobileMenu.classList.remove("active"));
+
+  // Footer year
+  if (yearSpan) {
+    yearSpan.textContent = new Date().getFullYear();
+  }
+
+  updateCart();
+});
